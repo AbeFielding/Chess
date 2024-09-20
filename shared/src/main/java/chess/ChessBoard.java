@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -23,44 +26,37 @@ public class ChessBoard {
         // Clear the board first
         board = new ChessPiece[8][8];
 
-        // Set up black pieces (TeamColor.BLACK)
-        setUpMajorPieces(ChessGame.TeamColor.BLACK, 1);
-        setUpPawns(ChessGame.TeamColor.BLACK, 2);
+        // Place black pieces
+        board[7][0] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+        board[7][1] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+        board[7][2] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+        board[7][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+        board[7][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+        board[7][5] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+        board[7][6] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+        board[7][7] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+        for (int i = 0; i < 8; i++) {
+            board[6][i] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+        }
 
-        // Set up white pieces (TeamColor.WHITE)
-        setUpMajorPieces(ChessGame.TeamColor.WHITE, 8);
-        setUpPawns(ChessGame.TeamColor.WHITE, 7);
-    }
-
-    /**
-     * Places all major pieces (Rook, Knight, Bishop, Queen, King) for a team
-     * @param color The team color (WHITE or BLACK)
-     * @param row The row in which to place the pieces (1 or 8)
-     */
-    private void setUpMajorPieces(ChessGame.TeamColor color, int row) {
-        board[row - 1][0] = new ChessPiece(color, ChessPiece.PieceType.ROOK);
-        board[row - 1][1] = new ChessPiece(color, ChessPiece.PieceType.KNIGHT);
-        board[row - 1][2] = new ChessPiece(color, ChessPiece.PieceType.BISHOP);
-        board[row - 1][3] = new ChessPiece(color, ChessPiece.PieceType.QUEEN);
-        board[row - 1][4] = new ChessPiece(color, ChessPiece.PieceType.KING);
-        board[row - 1][5] = new ChessPiece(color, ChessPiece.PieceType.BISHOP);
-        board[row - 1][6] = new ChessPiece(color, ChessPiece.PieceType.KNIGHT);
-        board[row - 1][7] = new ChessPiece(color, ChessPiece.PieceType.ROOK);
-    }
-
-    /**
-     * Places pawns for a team
-     * @param color The team color (WHITE or BLACK)
-     * @param row The row in which to place the pawns (2 or 7)
-     */
-    private void setUpPawns(ChessGame.TeamColor color, int row) {
-        for (int col = 0; col < 8; col++) {
-            board[row - 1][col] = new ChessPiece(color, ChessPiece.PieceType.PAWN);
+        // Place white pieces
+        board[0][0] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        board[0][1] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        board[0][2] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        board[0][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+        board[0][4] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+        board[0][5] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        board[0][6] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        board[0][7] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        for (int i = 0; i < 8; i++) {
+            board[1][i] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         }
     }
 
+
     /**
      * Gets the piece located at the given position, or null if the position is empty.
+     *
      * @param position The position to check.
      * @return The piece at that position, or null if the position is empty.
      */
@@ -73,8 +69,9 @@ public class ChessBoard {
 
     /**
      * Places a piece at the given position on the board.
+     *
      * @param position The position to place the piece at.
-     * @param piece The piece to place.
+     * @param piece    The piece to place.
      */
     public void placePiece(ChessPosition position, ChessPiece piece) {
         if (isValidPosition(position)) {
@@ -85,8 +82,9 @@ public class ChessBoard {
     /**
      * Adds a piece at the given position on the board. If a piece already exists at the position,
      * it is replaced by the new piece.
+     *
      * @param position The position to add the piece.
-     * @param piece The piece to add.
+     * @param piece    The piece to add.
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
         if (isValidPosition(position)) {
@@ -96,6 +94,7 @@ public class ChessBoard {
 
     /**
      * Clears the piece at the given position.
+     *
      * @param position The position to clear.
      */
     public void clearPiece(ChessPosition position) {
@@ -106,6 +105,7 @@ public class ChessBoard {
 
     /**
      * Helper method to check if a position is valid on the board.
+     *
      * @param position The position to check.
      * @return true if the position is valid, false otherwise.
      */
@@ -116,6 +116,7 @@ public class ChessBoard {
 
     /**
      * Resets the board to a custom setup for tests or special scenarios.
+     *
      * @param customBoard A 2D array of strings representing the custom board.
      */
     public void setupCustomBoard(String[][] customBoard) {
@@ -135,6 +136,7 @@ public class ChessBoard {
 
     /**
      * Helper method to get the PieceType from a character code.
+     *
      * @param code The character representing the piece type.
      * @return The corresponding PieceType.
      */
@@ -148,5 +150,33 @@ public class ChessBoard {
             case 'K' -> ChessPiece.PieceType.KING;
             default -> throw new IllegalArgumentException("Invalid piece type code: " + code);
         };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessBoard that = (ChessBoard) o;
+        return Objects.deepEquals(board, that.board);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(board);
+    }
+
+    @Override
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                ChessPiece piece = board[row][col];
+                sb.append(piece != null ? piece.toString() : ' '); // Use a space for empty squares
+                sb.append('|'); // Separator for visualization
+            }
+            sb.append('\n'); // New line for the next row
+        }
+        return sb.toString();
     }
 }
