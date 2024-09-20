@@ -56,6 +56,7 @@ public class ChessPiece {
         switch (this.type) {
             case BISHOP -> addBishopMoves(validMoves, board, myPosition);
             case ROOK -> addRookMoves(validMoves, board, myPosition);
+            case QUEEN -> addQueenMoves(validMoves, board, myPosition);
             // Add other cases for different pieces here
         }
         return validMoves;
@@ -69,29 +70,7 @@ public class ChessPiece {
         for (int[] direction : directions) {
             int row = myPosition.getRow();
             int col = myPosition.getColumn();
-
-            while (true) {
-                row += direction[0];
-                col += direction[1];
-
-                ChessPosition newPos = new ChessPosition(row, col);
-                if (board.isValidPosition(newPos)) {
-                    ChessPiece pieceAtNewPos = board.getPiece(newPos);
-                    if (pieceAtNewPos == null) {
-                        // No piece blocking, add move
-                        validMoves.add(new ChessMove(myPosition, newPos, null));
-                    } else {
-                        if (pieceAtNewPos.getTeamColor() != this.pieceColor) {
-                            // Enemy piece, add move and stop further movement
-                            validMoves.add(new ChessMove(myPosition, newPos, null));
-                        }
-                        break;
-                    }
-                } else {
-                    // Out of bounds
-                    break;
-                }
-            }
+            addMovesInDirection(validMoves, board, myPosition, direction, row, col);
         }
     }
 
@@ -103,28 +82,44 @@ public class ChessPiece {
         for (int[] direction : directions) {
             int row = myPosition.getRow();
             int col = myPosition.getColumn();
+            addMovesInDirection(validMoves, board, myPosition, direction, row, col);
+        }
+    }
 
-            while (true) {
-                row += direction[0];
-                col += direction[1];
+    private void addQueenMoves(Collection<ChessMove> validMoves, ChessBoard board, ChessPosition myPosition) {
+        int[][] directions = {
+                {1, 0}, {-1, 0}, {0, 1}, {0, -1}, // Vertical and horizontal
+                {1, 1}, {-1, -1}, {1, -1}, {-1, 1} // Diagonal movements
+        };
 
-                ChessPosition newPos = new ChessPosition(row, col);
-                if (board.isValidPosition(newPos)) {
-                    ChessPiece pieceAtNewPos = board.getPiece(newPos);
-                    if (pieceAtNewPos == null) {
-                        // No piece blocking, add move
-                        validMoves.add(new ChessMove(myPosition, newPos, null));
-                    } else {
-                        if (pieceAtNewPos.getTeamColor() != this.pieceColor) {
-                            // Enemy piece, add move and stop further movement in this direction
-                            validMoves.add(new ChessMove(myPosition, newPos, null));
-                        }
-                        break;
-                    }
+        for (int[] direction : directions) {
+            int row = myPosition.getRow();
+            int col = myPosition.getColumn();
+            addMovesInDirection(validMoves, board, myPosition, direction, row, col);
+        }
+    }
+
+    private void addMovesInDirection(Collection<ChessMove> validMoves, ChessBoard board, ChessPosition myPosition, int[] direction, int row, int col) {
+        while (true) {
+            row += direction[0];
+            col += direction[1];
+
+            ChessPosition newPos = new ChessPosition(row, col);
+            if (board.isValidPosition(newPos)) {
+                ChessPiece pieceAtNewPos = board.getPiece(newPos);
+                if (pieceAtNewPos == null) {
+                    // No piece blocking, add move
+                    validMoves.add(new ChessMove(myPosition, newPos, null));
                 } else {
-                    // Out of bounds
+                    if (pieceAtNewPos.getTeamColor() != this.pieceColor) {
+                        // Enemy piece, add move and stop further movement
+                        validMoves.add(new ChessMove(myPosition, newPos, null));
+                    }
                     break;
                 }
+            } else {
+                // Out of bounds
+                break;
             }
         }
     }
