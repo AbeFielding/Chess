@@ -7,7 +7,7 @@ import java.util.Collection;
  * Represents a single chess piece
  * <p>
  * Note: You can add to this class, but you may not alter
- * signature of the existing methods.
+ * the signature of the existing methods.
  */
 public class ChessPiece {
     private final ChessGame.TeamColor pieceColor;
@@ -45,59 +45,87 @@ public class ChessPiece {
     }
 
     /**
-     * Calculates all the positions a chess piece can move to
-     * Does not take into account moves that are illegal due to leaving the king in
-     * danger
+     * Calculates all the positions a chess piece can move to.
+     * Does not take into account moves that are illegal due to leaving the king in danger.
      *
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> moves = new ArrayList<>();
-        int row = myPosition.getRow();
-        int col = myPosition.getColumn();
+        Collection<ChessMove> validMoves = new ArrayList<>();
 
-        // Define movement directions for a bishop (diagonal)
+        switch (this.type) {
+            case BISHOP -> addBishopMoves(validMoves, board, myPosition);
+            case ROOK -> addRookMoves(validMoves, board, myPosition);
+            // Add other cases for different pieces here
+        }
+        return validMoves;
+    }
+
+    private void addBishopMoves(Collection<ChessMove> validMoves, ChessBoard board, ChessPosition myPosition) {
         int[][] directions = {
-                {1, 1},   // down-right
-                {1, -1},  // down-left
-                {-1, 1},  // up-right
-                {-1, -1}  // up-left
+                {1, 1}, {-1, -1}, {1, -1}, {-1, 1} // Diagonal movements
         };
 
         for (int[] direction : directions) {
-            int dRow = direction[0];
-            int dCol = direction[1];
+            int row = myPosition.getRow();
+            int col = myPosition.getColumn();
 
-            int newRow = row;
-            int newCol = col;
-
-            // Move in the current direction until blocked or out of bounds
             while (true) {
-                newRow += dRow;
-                newCol += dCol;
+                row += direction[0];
+                col += direction[1];
 
-                // Check if the new position is out of bounds
-                if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) {
-                    break;
-                }
-
-                ChessPosition newPosition = new ChessPosition(newRow, newCol);
-                ChessPiece targetPiece = board.getPiece(newPosition);
-
-                // If the target position is empty, add the move
-                if (targetPiece == null) {
-                    moves.add(new ChessMove(myPosition, newPosition, null));
-                } else {
-                    // If there's a piece of the opposite color, add the capture move
-                    if (targetPiece.getTeamColor() != this.getTeamColor()) {
-                        moves.add(new ChessMove(myPosition, newPosition, null));
+                ChessPosition newPos = new ChessPosition(row, col);
+                if (board.isValidPosition(newPos)) {
+                    ChessPiece pieceAtNewPos = board.getPiece(newPos);
+                    if (pieceAtNewPos == null) {
+                        // No piece blocking, add move
+                        validMoves.add(new ChessMove(myPosition, newPos, null));
+                    } else {
+                        if (pieceAtNewPos.getTeamColor() != this.pieceColor) {
+                            // Enemy piece, add move and stop further movement
+                            validMoves.add(new ChessMove(myPosition, newPos, null));
+                        }
+                        break;
                     }
-                    // Stop if the bishop encounters a piece (can’t move further)
+                } else {
+                    // Out of bounds
                     break;
                 }
             }
         }
+    }
 
-        return moves;
+    private void addRookMoves(Collection<ChessMove> validMoves, ChessBoard board, ChessPosition myPosition) {
+        int[][] directions = {
+                {1, 0}, {-1, 0}, {0, 1}, {0, -1} // Vertical and horizontal
+        };
+
+        for (int[] direction : directions) {
+            int row = myPosition.getRow();
+            int col = myPosition.getColumn();
+
+            while (true) {
+                row += direction[0];
+                col += direction[1];
+
+                ChessPosition newPos = new ChessPosition(row, col);
+                if (board.isValidPosition(newPos)) {
+                    ChessPiece pieceAtNewPos = board.getPiece(newPos);
+                    if (pieceAtNewPos == null) {
+                        // No piece blocking, add move
+                        validMoves.add(new ChessMove(myPosition, newPos, null));
+                    } else {
+                        if (pieceAtNewPos.getTeamColor() != this.pieceColor) {
+                            // Enemy piece, add move and stop further movement in this direction
+                            validMoves.add(new ChessMove(myPosition, newPos, null));
+                        }
+                        break;
+                    }
+                } else {
+                    // Out of bounds
+                    break;
+                }
+            }
+        }
     }
 }
