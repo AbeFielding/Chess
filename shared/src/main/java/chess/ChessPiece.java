@@ -57,6 +57,7 @@ public class ChessPiece {
             case BISHOP -> addBishopMoves(validMoves, board, myPosition);
             case ROOK -> addRookMoves(validMoves, board, myPosition);
             case QUEEN -> addQueenMoves(validMoves, board, myPosition);
+            case KNIGHT -> addKnightMoves(validMoves, board, myPosition);
             // Add other cases for different pieces here
         }
         return validMoves;
@@ -96,6 +97,25 @@ public class ChessPiece {
             int row = myPosition.getRow();
             int col = myPosition.getColumn();
             addMovesInDirection(validMoves, board, myPosition, direction, row, col);
+        }
+    }
+
+    private void addKnightMoves(Collection<ChessMove> validMoves, ChessBoard board, ChessPosition myPosition) {
+        int[][] knightMoves = {
+                {2, 1}, {2, -1}, {-2, 1}, {-2, -1},
+                {1, 2}, {1, -2}, {-1, 2}, {-1, -2}
+        };
+
+        for (int[] move : knightMoves) {
+            int newRow = myPosition.getRow() + move[0];
+            int newCol = myPosition.getColumn() + move[1];
+            ChessPosition newPos = new ChessPosition(newRow, newCol);
+            if (board.isValidPosition(newPos)) {
+                ChessPiece pieceAtNewPos = board.getPiece(newPos);
+                if (pieceAtNewPos == null || pieceAtNewPos.getTeamColor() != this.pieceColor) {
+                    validMoves.add(new ChessMove(myPosition, newPos, null));
+                }
+            }
         }
     }
 
