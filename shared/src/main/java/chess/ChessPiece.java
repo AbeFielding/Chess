@@ -52,8 +52,52 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        // Piece movement rules will go here
-        return new ArrayList<>();
+        Collection<ChessMove> moves = new ArrayList<>();
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+        // Define movement directions for a bishop (diagonal)
+        int[][] directions = {
+                {1, 1},   // down-right
+                {1, -1},  // down-left
+                {-1, 1},  // up-right
+                {-1, -1}  // up-left
+        };
+
+        for (int[] direction : directions) {
+            int dRow = direction[0];
+            int dCol = direction[1];
+
+            int newRow = row;
+            int newCol = col;
+
+            // Move in the current direction until blocked or out of bounds
+            while (true) {
+                newRow += dRow;
+                newCol += dCol;
+
+                // Check if the new position is out of bounds
+                if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) {
+                    break;
+                }
+
+                ChessPosition newPosition = new ChessPosition(newRow, newCol);
+                ChessPiece targetPiece = board.getPiece(newPosition);
+
+                // If the target position is empty, add the move
+                if (targetPiece == null) {
+                    moves.add(new ChessMove(myPosition, newPosition, null));
+                } else {
+                    // If there's a piece of the opposite color, add the capture move
+                    if (targetPiece.getTeamColor() != this.getTeamColor()) {
+                        moves.add(new ChessMove(myPosition, newPosition, null));
+                    }
+                    // Stop if the bishop encounters a piece (can’t move further)
+                    break;
+                }
+            }
+        }
+
+        return moves;
     }
 }
-
