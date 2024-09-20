@@ -58,6 +58,7 @@ public class ChessPiece {
             case ROOK -> addRookMoves(validMoves, board, myPosition);
             case QUEEN -> addQueenMoves(validMoves, board, myPosition);
             case KNIGHT -> addKnightMoves(validMoves, board, myPosition);
+            case KING -> addKingMoves(validMoves, board, myPosition);
             // Add other cases for different pieces here
         }
         return validMoves;
@@ -107,6 +108,25 @@ public class ChessPiece {
         };
 
         for (int[] move : knightMoves) {
+            int newRow = myPosition.getRow() + move[0];
+            int newCol = myPosition.getColumn() + move[1];
+            ChessPosition newPos = new ChessPosition(newRow, newCol);
+            if (board.isValidPosition(newPos)) {
+                ChessPiece pieceAtNewPos = board.getPiece(newPos);
+                if (pieceAtNewPos == null || pieceAtNewPos.getTeamColor() != this.pieceColor) {
+                    validMoves.add(new ChessMove(myPosition, newPos, null));
+                }
+            }
+        }
+    }
+
+    private void addKingMoves(Collection<ChessMove> validMoves, ChessBoard board, ChessPosition myPosition) {
+        int[][] kingMoves = {
+                {1, 0}, {-1, 0}, {0, 1}, {0, -1}, // Vertical and horizontal
+                {1, 1}, {1, -1}, {-1, 1}, {-1, -1} // Diagonal movements
+        };
+
+        for (int[] move : kingMoves) {
             int newRow = myPosition.getRow() + move[0];
             int newCol = myPosition.getColumn() + move[1];
             ChessPosition newPos = new ChessPosition(newRow, newCol);
